@@ -2,34 +2,35 @@ import { StatusBar } from 'expo-status-bar';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
 
+const BUTTONS = ['7', '8', '9', '/'];
+
 export default function App() {
 
-  const [visible, setVisible] = useState(true);
+  const [expression, setExpression] = useState('');
+
+  function append(symbol: string): void {
+    setExpression((previousExpression) => previousExpression + symbol);
+  }
 
   return (
     <View style={styles.container}>
-      <StatusBar style="auto"/>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Header</Text>
+      <StatusBar style="dark"/>
+      <View style={styles.display}>
+        <Text style={styles.expression} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.35}>{expression || '0'}</Text>
       </View>
 
-      <View style={styles.middle}>
-        <View style={styles.content}>
-          <Pressable style={styles.button} onPress={() => setVisible(!visible)}>
-            <Text style={styles.buttonText}>{visible ? 'Hide' : 'Show'}</Text>
+      <View style={styles.buttonRow}>
+        {BUTTONS.map((symbol) => (
+          <Pressable key={symbol} style={({ pressed }) => [ styles.button, pressed && styles.buttonPressed,
+          ]}
+          onPress={() => append(symbol)}
+          accessibilityRole="button"
+          accessibilityLabel='{symbol}'
+          >
+            <Text style={styles.buttonText}>{symbol}</Text>
           </Pressable>
-
-          {visible && (
-            <View style={styles.card}>
-              <Text style={styles.nameStyle}>Jan Kowalski</Text>
-              <Text style={styles.description}> Zaawansowane programowanie systemow mobilnych</Text>
-            </View>
-          )}
-        </View>
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Footer</Text>
+        ))}
+        
       </View>
     </View>
   );
@@ -38,109 +39,55 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-
-  header: {
-    height: 60,
-    backgroundColor: '#1D4165',
-    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
-  },
-
-  headerText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  middle: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  items: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 8,
-  },
-
-  content: {
-    width: '100%',
-    alignItems: 'center',
+    paddingTop: 12,
+    marginTop: 100,
     gap: 10,
   },
 
-  button: {
-    minWidth: 44,
-    minHeight: 44,
-    backgroundColor: '#007579',
-    borderRadius: 5,
+display: {
+    width: '100%',
+    minHeight: 76,
+    backgroundColor: '#F1F3F6',
+    borderRadius: 9,
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
+    alignItems: 'flex-end',
+    paddingHorizontal: 12,
     paddingVertical: 10,
   },
 
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-
-  card: {
-    width: '80%',
-    minHeight: 76,
-    backgroundColor: '#F1F7F1',
-    borderColor: '#8AB68A',
-    borderWidth: 1,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 12,
-  },
-
-  nameStyle: {
+  expression: {
+    width: '100%',
     color: '#1D4165',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
+    fontSize: 28,
+    textAlign: 'right',
+    fontVariant: ['tabular-nums'],
   },
 
-  description: {
-    color: "#777777",
-    fontSize: 10,
-    textAlign: 'center',
+  buttonRow: {
+    width: '100%',
+    flexDirection: 'row',
+    gap: 8,
   },
 
-  item: {
+  button: {
     flex: 1,
-    aspectRatio: 1,
-    backgroundColor: '#E6F3F5',
-    borderRadius: 8,
+    minWidth: 0,
+    minHeight: 54,
+    backgroundColor: '#E9EDF2',
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-  itemText: {
-    color: '#006064',
-    fontSize: 16,
-    fontWeight: 'bold',
+  buttonPressed: {
+    backgroundColor: '#D4DDE8',
   },
 
-  footer: {
-    height: 36,
-    backgroundColor: '#447eca',
-    justifyContent: 'center',
-    paddingHorizontal: 12,
-  },
-
-  footerText: {
-    color: '#000000',
-    fontWeight: 'bold',
-    fontSize: 10,
+  buttonText: {
+    color: '#1D4165',
+    fontSize: 18,
+    fontWeight: '500',
   },
 });
