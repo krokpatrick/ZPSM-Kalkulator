@@ -1,7 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
 
 export default function App() {
+
+  const [visible, setVisible] = useState(true);
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto"/>
@@ -10,18 +14,17 @@ export default function App() {
       </View>
 
       <View style={styles.middle}>
-        <View style={styles.items}>
-          <View style={styles.item}>
-            <Text style={styles.itemText}>A</Text>
-          </View>
+        <View style={styles.content}>
+          <Pressable style={styles.button} onPress={() => setVisible(!visible)}>
+            <Text style={styles.buttonText}>{visible ? 'Hide' : 'Show'}</Text>
+          </Pressable>
 
-          <View style={styles.item}>
-            <Text style={styles.itemText}>B</Text>
-          </View>
-
-          <View style={styles.item}>
-            <Text style={styles.itemText}>C</Text>
-          </View>
+          {visible && (
+            <View style={styles.card}>
+              <Text style={styles.nameStyle}>Jan Kowalski</Text>
+              <Text style={styles.description}> Zaawansowane programowanie systemow mobilnych</Text>
+            </View>
+          )}
         </View>
       </View>
 
@@ -54,6 +57,7 @@ const styles = StyleSheet.create({
   middle: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
   },
 
   items: {
@@ -62,6 +66,54 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     paddingHorizontal: 8,
+  },
+
+  content: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 10,
+  },
+
+  button: {
+    minWidth: 44,
+    minHeight: 44,
+    backgroundColor: '#007579',
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+
+  card: {
+    width: '80%',
+    minHeight: 76,
+    backgroundColor: '#F1F7F1',
+    borderColor: '#8AB68A',
+    borderWidth: 1,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 12,
+  },
+
+  nameStyle: {
+    color: '#1D4165',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+
+  description: {
+    color: "#777777",
+    fontSize: 10,
+    textAlign: 'center',
   },
 
   item: {
