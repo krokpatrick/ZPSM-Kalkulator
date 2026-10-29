@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useState } from 'react';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const BASIC_ROWS = [
   ['AC', '+-', '%', '/'],
@@ -104,6 +105,8 @@ export default function App() {
   }
 
   return (
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom', 'left', 'right']}>
     <View style={[
       styles.container,
       landscape && styles.containerLandscape,
@@ -138,6 +141,8 @@ export default function App() {
           )}
       </View>
     </View>
+    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
