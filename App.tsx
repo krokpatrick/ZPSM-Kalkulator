@@ -3,37 +3,29 @@ import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-na
 import { useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Key, BASIC, EXTENDED } from './src/keys';
+import CalculatorKey from './src/components/CalculatorKey';
 
 
 type KeypadProps = {
   rows: Key[][];
-  onPress: (key: Key) => void;
+  onPress: (label: string) => void;
 };
 
-function Keypad({ rows, onPress}: KeypadProps) {
+function Keypad({ rows, onPress }: KeypadProps) {
   return (
     <View style={styles.keypad}>
       {rows.map((row, rowIndex) => (
-        <View style={styles.buttonRow} key={rowIndex}>
-          {row.map((key) => (
-            <Pressable
-              key={key.label}
-              style={({ pressed }) => [
-                styles.button,,
-                { flex: key.span ?? 1 },
-                pressed && styles.buttonPressed,
-              ]}
-              onPress={() => onPress(key)}
-              accessibilityRole="button"
-              accessibilityLabel={
-                key.label === '⌫' ? 'Delete last character' : key.label
-              }
-              >
-                <Text style={styles.buttonText}>{key.label}</Text>
-              </Pressable>
-          ))}
-        </View>
-      ))}
+          <View style={styles.buttonRow} key={rowIndex}>
+            {row.map((key) => (
+              <CalculatorKey
+                key={key.label}
+                item={key}
+                onPress={onPress}
+              />
+            ))}
+            
+          </View>
+        ))}
     </View>
   )
 }
@@ -45,11 +37,9 @@ export default function App() {
 
   const [expression, setExpression] = useState('');
 
-  function append(key: Key): void {
+  function append(symbol: string): void {
 
-    const symbol = key.label;
-
-    if (key.role === 'clear') {
+    if (symbol === 'AC') {
       setExpression('');
       return;
     }
@@ -219,22 +209,4 @@ display: {
     gap: 8,
   },
 
-  button: {
-    flex: 1,
-    minWidth: 0,
-    backgroundColor: '#E9EDF2',
-    borderRadius: 9,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  buttonPressed: {
-    backgroundColor: '#D4DDE8',
-  },
-
-  buttonText: {
-    color: '#1D4165',
-    fontSize: 18,
-    fontWeight: '500',
-  },
 });
