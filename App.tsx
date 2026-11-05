@@ -6,6 +6,7 @@ import { Key, BASIC, EXTENDED } from './src/keys';
 import CalculatorKey from './src/components/CalculatorKey';
 
 
+
 type KeypadProps = {
   rows: Key[][];
   onPress: (label: string) => void;
