@@ -2,24 +2,12 @@ import { StatusBar } from 'expo-status-bar';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Key, BASIC, EXTENDED } from './src/keys';
 
-const BASIC_ROWS = [
-  ['AC', '+-', '%', '/'],
-  ['7', '8', '9', 'x'],
-  ['4', '5', '6', '-'],
-  ['1', '2', '3', '+'],
-  ['0', ',', '⌫', '=']];
-
-const EXTENDED_ROWS = [
-  ['(', ')'],
-  ['x²', '√'],
-  ['xʸ', '1/x'],
-  ['π', 'e'],
-];
 
 type KeypadProps = {
-  rows: string[][];
-  onPress: (symbol: string) => void;
+  rows: Key[][];
+  onPress: (key: Key) => void;
 };
 
 function Keypad({ rows, onPress}: KeypadProps) {
@@ -27,20 +15,21 @@ function Keypad({ rows, onPress}: KeypadProps) {
     <View style={styles.keypad}>
       {rows.map((row, rowIndex) => (
         <View style={styles.buttonRow} key={rowIndex}>
-          {row.map((symbol) => (
+          {row.map((key) => (
             <Pressable
-              key={symbol}
+              key={key.label}
               style={({ pressed }) => [
-                styles.button,
+                styles.button,,
+                { flex: key.span ?? 1 },
                 pressed && styles.buttonPressed,
               ]}
-              onPress={() => onPress(symbol)}
+              onPress={() => onPress(key)}
               accessibilityRole="button"
               accessibilityLabel={
-                symbol === '⌫' ? 'Delete last character' : symbol
+                key.label === '⌫' ? 'Delete last character' : key.label
               }
               >
-                <Text style={styles.buttonText}>{symbol}</Text>
+                <Text style={styles.buttonText}>{key.label}</Text>
               </Pressable>
           ))}
         </View>
@@ -56,9 +45,11 @@ export default function App() {
 
   const [expression, setExpression] = useState('');
 
-  function append(symbol: string): void {
+  function append(key: Key): void {
 
-    if (symbol === 'AC') {
+    const symbol = key.label;
+
+    if (key.role === 'clear') {
       setExpression('');
       return;
     }
@@ -108,7 +99,7 @@ export default function App() {
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom', 'left', 'right']}>
     <View style={[
-      styles.container,
+      styles.calculator,
       landscape && styles.containerLandscape,
       ]}
       >
@@ -130,13 +121,13 @@ export default function App() {
               landscape && styles.basicBlockLandscape,
             ]}
           >
-            <Keypad rows={BASIC_ROWS} onPress={append} />
+            <Keypad rows={BASIC} onPress={append} />
 
           </View>
 
           {landscape && (
             <View style={styles.extendedBlock}>
-              <Keypad rows={EXTENDED_ROWS} onPress={append} />
+              <Keypad rows={EXTENDED} onPress={append} />
             </View>
           )}
       </View>
