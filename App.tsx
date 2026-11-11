@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Key, BASIC, EXTENDED } from './src/keys';
 import CalculatorKey from './src/components/CalculatorKey';
+import { evaluate } from './src/logic/evaluate';
 
 
 
@@ -50,6 +51,20 @@ export default function App() {
       return;
     }
 
+    if (symbol === '=') {
+      try {
+        const result = evaluate(expression);
+
+        setExpression(String(result));
+
+      } 
+      catch 
+      {
+        setExpression('Error');
+      }
+      return;
+    }
+
     if (symbol === '+-') {
       setExpression((previous) => {
         if (!previous) return '-';
@@ -65,9 +80,7 @@ export default function App() {
     }
 
     if (symbol === 'x²') {
-      setExpression((previous) => {
-        return previous + '^2';
-      });
+      setExpression((previous) => previous + '^2');
       return;
     }
 
