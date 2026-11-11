@@ -34,12 +34,12 @@ export function evaluate(input: string): number {
   }
 
   let expression = input
+  .replaceAll("x²", "^2")
+  .replaceAll("xʸ", "^")
   .replaceAll("×", "*")
   .replaceAll("x", "*")
   .replaceAll("÷", "/")
   .replaceAll("−", "-")
-  .replaceAll("x²", "^2")
-  .replaceAll("xʸ", "^")
   .replaceAll("√(", "sqrt(")
   .replaceAll("π", "PI")
   .replace(/\be\b/g, "E")
@@ -50,10 +50,16 @@ export function evaluate(input: string): number {
     const result = parser.evaluate(expression);
 
     if (typeof result !== "number" || !Number.isFinite(result)) {
+
+      if (expression.includes('/')) {
+        throw new ExpressionError('Division by zero');
+      }
+
       throw new ExpressionError("Invalid mathematical result");
     }
 
-    return result
+    return result;
+
   } catch (error) {
     if (error instanceof ExpressionError) {
       throw error;

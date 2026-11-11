@@ -32,22 +32,29 @@ function Keypad({ rows, onPress }: KeypadProps) {
   )
 }
 
+function formatResult(value: number): string {
+  return Number(value.toFixed(10)).toString();
+}
+
 export default function App() {
 
   const { width, height } = useWindowDimensions();
   const landscape = width > height;
 
   const [expression, setExpression] = useState('');
+  const [error, setError] = useState('');
 
   function append(symbol: string): void {
 
     if (symbol === 'AC') {
       setExpression('');
+      setError('');
       return;
     }
 
     if (symbol === '⌫') {
       setExpression((previous) => previous.slice(0, -1));
+      setError('');
       return;
     }
 
@@ -56,11 +63,30 @@ export default function App() {
         const result = evaluate(expression);
 
         setExpression(String(result));
+        setError('');
 
       } 
-      catch 
+      catch (error)
       {
-        setExpression('Error');
+        if (error instanceof Error) {
+          switch(error.message) {
+            case 'Empty expression':
+              setError('Wprowadź wyrażenie');
+              break;
+
+            case 'Division by zero':
+              setError('Nie można dzielić przez zero');
+              break;
+            
+            case 'Invalid mathematical result':
+            case 'Invalid expression':
+            default:
+              setError('Nieprawidłowe wyrażenie');
+              break;
+          }
+        } else {
+          setError("Nieznany błąd");
+        }
       }
       return;
     }
@@ -76,16 +102,20 @@ export default function App() {
         return '-' + previous;
       });
 
+      setError('');
+
       return;
     }
 
     if (symbol === 'x²') {
       setExpression((previous) => previous + '^2');
+      setError('');
       return;
     }
 
     if (symbol === 'xʸ') {
       setExpression((previous) => previous + '^');
+      setError('');
       return;
     }
 
@@ -93,10 +123,18 @@ export default function App() {
       setExpression((previous) => {
         return '1/(' + previous + ')'
       });
+      setError('');
+      return;
+    }
+
+    if (symbol === '√') {
+      setExpression((previous) => previous + '√(');
+      setError('');
       return;
     }
 
     setExpression((previousExpression) => previousExpression + symbol);
+    setError('');
   }
 
   return (
@@ -112,7 +150,27 @@ export default function App() {
         styles.display,
         landscape && styles.displayLandscape,
       ]}>
-        <Text style={styles.expression} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.35}>{expression || '0'}</Text>
+        <View style={styles.displayContent}>
+          <Text
+            style={styles.expression}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.35}
+          >
+            {expression
+              ? (
+                  Number.isFinite(Number(expression))
+                    ? formatResult(Number(expression))
+                    : expression
+                )
+              : '0'}
+          </Text>
+          {error !== '' && ( 
+            <Text style={styles.errorMessage}>
+              {error}
+            </Text>
+          )}
+        </View>
       </View>
 
       <View style={[
@@ -221,6 +279,17 @@ display: {
     minHeight: 0,
     flexDirection: 'row',
     gap: 8,
+  },
+
+  displayContent: {
+    width: '100%',
+    gap: 4,
+  },
+
+  errorMessage: {
+    color: '#D93025',
+    fontSize: 11,
+    textAlign: 'right',
   },
 
 });
